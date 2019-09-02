@@ -1,9 +1,10 @@
-#include <GL/glut.h>
-#include <iostream>
-#include <OpenImageIO/imageio.h>
+// #include <GL/glut.h>
+// #include <iostream>
+// #include <OpenImageIO/imageio.h>
+#include "Helper.h"
 
-using namespace std;
-OIIO_NAMESPACE_USING;
+// using namespace std;
+// OIIO_NAMESPACE_USING;
 
 const int WIDTH = 400;
 const int HEIGHT = 400;
@@ -59,7 +60,26 @@ void drawSquare(){
   glFlush();
 }
 
-
+// Image readImage(char * argv[]) {
+//   ImageInput *in = ImageInput::open(argv[1]);
+//   if (!in) {
+//       exit(1);
+//   }
+//   const ImageSpec &spec = in->spec();
+//   // int xres = spec.width;
+//   // int yres = spec.height;
+//   // int channels = spec.nchannels;
+//   Image image;
+//   image.width = spec.width;
+//   image.height = spec.height;
+//   image.channels = spec.nchannels;
+//   image.pixels = new unsigned char[image.width*image.height*image.channels];
+//   // std::vector<unsigned char> pixels (image.width*image.height*image.channels);
+//   in->read_image (TypeDesc::UINT8, &image.pixels[0]);
+//   in->close ();
+//   ImageInput::destroy (in);
+//   return image;
+// }
 
 int main (int argc, char *argv[]) {
   glutInit(&argc, argv);
@@ -74,7 +94,10 @@ int main (int argc, char *argv[]) {
     glutDisplayFunc(blackWindow);
   }
   else {
-
+    //read in image
+    Image image = readImage(argv);
+    //output image
+    writeImage(image);
   }
   glutMainLoop();
   return 0;
