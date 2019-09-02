@@ -12,7 +12,7 @@ struct Image {
 };
 
 void writeImage(Image image) {
-  const char *filename = "output.jpg";
+  const char *filename = "output.png";
   const int xres = image.width, yres = image.height;
   const int channels = image.channels;  // RGB
   ImageOutput *out = ImageOutput::create (filename);
@@ -32,9 +32,6 @@ Image readImage(char * argv[]) {
       exit(1);
   }
   const ImageSpec &spec = in->spec();
-  // int xres = spec.width;
-  // int yres = spec.height;
-  // int channels = spec.nchannels;
   Image image;
   image.width = spec.width;
   image.height = spec.height;
