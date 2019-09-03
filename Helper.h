@@ -1,6 +1,7 @@
 #include <GL/glut.h>
 #include <iostream>
 #include <OpenImageIO/imageio.h>
+#include <string>
 using namespace std;
 OIIO_NAMESPACE_USING;
 
@@ -9,6 +10,7 @@ struct Image {
   int height;
   int channels;
   unsigned char * pixels;
+  string ext;
 };
 
 void writeImage(Image image) {
@@ -26,8 +28,8 @@ void writeImage(Image image) {
 }
 
 
-Image readImage(char * argv[]) {
-  ImageInput *in = ImageInput::open(argv[1]);
+Image readImage(string file) {
+  ImageInput *in = ImageInput::open(file);
   if (!in) {
       exit(1);
   }
@@ -36,7 +38,8 @@ Image readImage(char * argv[]) {
   image.width = spec.width;
   image.height = spec.height;
   image.channels = spec.nchannels;
-  image.pixels = new unsigned char[image.width*image.height*image.channels];
+  image.ext = file.substr(file.find("."), file.length());
+  image.pixels = new unsigned char[image.width*image.height*4];
   // std::vector<unsigned char> pixels (image.width*image.height*image.channels);
   in->read_image (TypeDesc::UINT8, &image.pixels[0]);
   in->close ();

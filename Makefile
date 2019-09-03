@@ -23,20 +23,26 @@ PROJECT = imgview
 #this makefile will compile each cpp separately before linking
 OBJECTS = imgview.o
 
-#this does the linking step  
+#this does the linking step
 all: ${PROJECT}
-${PROJECT} : ${OBJECTS} 
-	${CC} ${CFLAGS} -o ${PROJECT} ${OBJECTS} ${LDFLAGS} 
+${PROJECT} : ${OBJECTS}
+	${CC} ${CFLAGS} -o ${PROJECT} ${OBJECTS} ${LDFLAGS}
 
 #this generically compiles each .cpp to a .o file
 %.o: %.cpp
 	${CC} -c ${CFLAGS} $<
 
-#it does not check for .h files dependencies, but you could add that, e.g. 
+#it does not check for .h files dependencies, but you could add that, e.g.
 #somfile.o    : somefile.cpp someheader.h
 #	${CC} ${CFLAGS} -c somefile.cpp
 
-	
+
 #this will clean up all temporary files created by make all
 clean:
 	rm -f core.* *.o *~ ${PROJECT}
+
+test:
+	./imgview parrot_greyscale.png
+	./imgview teapot.jpg
+	./imgview cube.ppm
+	./imgview mario.png
