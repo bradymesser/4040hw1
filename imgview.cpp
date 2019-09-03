@@ -1,9 +1,8 @@
 #include "Helper.h"
 
-const int WIDTH = 400;
-const int HEIGHT = 400;
+const int WIDTH = 500;
+const int HEIGHT = 500;
 static int icolor = 0;
-// Image * img_global = NULL;
 string filename = "";
 
 void blackWindow() {
@@ -19,7 +18,9 @@ void handleReshape(int w, int h) {
 	// define the drawing coordinate system on the viewport
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluOrtho2D(0, w, 0, h);// sets up a 2D orthographic viewing region
+  glOrtho( 0, w, 0, h, 0.1, 1 );
+    glPixelZoom( 1, -1 );
+    glRasterPos3f(0, h - 1, -0.3);
 }
 
 void drawImage(){
@@ -28,14 +29,10 @@ void drawImage(){
 
   // clear window to background color
   glClear(GL_COLOR_BUFFER_BIT);
-  glRasterPos2i(0,0);
 
   Image image = readImage(filename);
-  // img_global = &image;
-  //output image
-  writeImage(image);
 
-  cout << "HERE " << image.channels << endl;
+  writeImage(image);
   switch (image.channels) {
     case 1:
       glDrawPixels(image.width, image.height, GL_LUMINANCE, GL_UNSIGNED_BYTE, image.pixels);
