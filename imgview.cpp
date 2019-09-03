@@ -3,7 +3,8 @@
 const int WIDTH = 400;
 const int HEIGHT = 400;
 static int icolor = 0;
-Image * img_global = NULL;
+// Image * img_global = NULL;
+string filename = "";
 
 void blackWindow() {
   glClearColor(0,0,0,0);
@@ -29,24 +30,27 @@ void drawImage(){
   glClear(GL_COLOR_BUFFER_BIT);
   glRasterPos2i(0,0);
 
-  if (img_global != NULL) {
-    cout << "HERE " << img_global->channels << endl;
-    switch (img_global->channels) {
-      case 1:
-        glDrawPixels(img_global->width, img_global->height, GL_LUMINANCE, GL_UNSIGNED_BYTE, img_global->pixels);
-        break;
-      case 2:
-        glDrawPixels(img_global->width, img_global->height, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, img_global->pixels);
-        break;
-      case 3:
-        glDrawPixels(img_global->width, img_global->height, GL_RGB, GL_UNSIGNED_BYTE, img_global->pixels);
-        break;
-      case 4:
-        glDrawPixels(img_global->width, img_global->height, GL_RGBA, GL_UNSIGNED_BYTE, img_global->pixels);
-        break;
-      default:
-        break;
-    }
+  Image image = readImage(filename);
+  // img_global = &image;
+  //output image
+  writeImage(image);
+
+  cout << "HERE " << image.channels << endl;
+  switch (image.channels) {
+    case 1:
+      glDrawPixels(image.width, image.height, GL_LUMINANCE, GL_UNSIGNED_BYTE, image.pixels);
+      break;
+    case 2:
+      glDrawPixels(image.width, image.height, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, image.pixels);
+      break;
+    case 3:
+      glDrawPixels(image.width, image.height, GL_RGB, GL_UNSIGNED_BYTE, image.pixels);
+      break;
+    case 4:
+      glDrawPixels(image.width, image.height, GL_RGBA, GL_UNSIGNED_BYTE, image.pixels);
+      break;
+    default:
+      break;
   }
   // flush the OpenGL pipeline to the viewport
   glFlush();
@@ -58,7 +62,11 @@ void handleKey(unsigned char key, int x, int y) {
     case 'Q':
     case 27:		// esc - quit
       exit(0);
-
+    case 'r':
+    case 'R':
+      cout << "Enter the filename: ";
+      cin >> filename;
+      glutPostRedisplay();
     default:		// not a valid key -- just ignore it
       return;
   }
@@ -78,11 +86,7 @@ int main (int argc, char *argv[]) {
     glutDisplayFunc(blackWindow);
   }
   else {
-    //read in image
-    Image image = readImage(argv[1]);
-    img_global = &image;
-    //output image
-    writeImage(image);
+    filename = argv[1];
   }
   glutMainLoop();
   return 0;
