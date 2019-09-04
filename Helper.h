@@ -13,8 +13,7 @@ struct Image {
   string ext;
 };
 
-void writeImage(Image image) {
-  const char *filename = "output.png";
+void writeImage(Image image, string filename) {
   const int xres = image.width, yres = image.height;
   const int channels = image.channels;  // RGB
   ImageOutput *out = ImageOutput::create (filename);
@@ -31,6 +30,7 @@ void writeImage(Image image) {
 Image readImage(string file) {
   ImageInput *in = ImageInput::open(file);
   if (!in) {
+      cout << "Could not open file " << file << " exiting. " << endl;
       exit(1);
   }
   const ImageSpec &spec = in->spec();

@@ -1,15 +1,10 @@
 #include "Helper.h"
 
-const int WIDTH = 500;
-const int HEIGHT = 500;
+int WIDTH = 500;
+int HEIGHT = 500;
 static int icolor = 0;
 string filename = "";
-
-void blackWindow() {
-  glClearColor(0,0,0,0);
-  glClear(GL_COLOR_BUFFER_BIT);
-  glFlush();
-}
+Image img_global;
 
 void handleReshape(int w, int h) {
 	// set the viewport to be the entire window
@@ -19,20 +14,30 @@ void handleReshape(int w, int h) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
   glOrtho( 0, w, 0, h, 0.1, 1 );
-    glPixelZoom( 1, -1 );
-    glRasterPos3f(0, h - 1, -0.3);
+  // flip the image to the correct orientation
+  glPixelZoom( 1, -1 );
+  glRasterPos3f(0, h - 1, -0.3);
 }
 
 void drawImage(){
   // specify window clear (background) color to be opaque white
-  glClearColor(1, 1, 1, 1);
+  glClearColor(0,0,0,0);
 
   // clear window to background color
   glClear(GL_COLOR_BUFFER_BIT);
 
-  Image image = readImage(filename);
+  if (filename == "") {
+    glClearColor(0,0,0,0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glFlush();
+    return;
+  }
 
-  writeImage(image);
+  Image image = readImage(filename);
+  img_global = image;
+  glutReshapeWindow(image.width, image.height);
+  glutPostRedisplay();
+  // writeImage(image);
   switch (image.channels) {
     case 1:
       glDrawPixels(image.width, image.height, GL_LUMINANCE, GL_UNSIGNED_BYTE, image.pixels);
@@ -64,6 +69,15 @@ void handleKey(unsigned char key, int x, int y) {
       cout << "Enter the filename: ";
       cin >> filename;
       glutPostRedisplay();
+      break;
+    case 'w':
+    case 'W': {
+      string temp;
+      cout << "Enter the name of the output file: ";
+      cin >> temp;
+      writeImage(img_global, temp);
+      break;
+    }
     default:		// not a valid key -- just ignore it
       return;
   }
@@ -73,14 +87,14 @@ int main (int argc, char *argv[]) {
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_RGBA);
   glutInitWindowSize(WIDTH, HEIGHT);
-  glutCreateWindow("TEST");
+  glutCreateWindow("IMGVIEW");
 
   glutDisplayFunc(drawImage);	  // display callback
   glutKeyboardFunc(handleKey);
   glutReshapeFunc(handleReshape); // window resize callback
 
   if (argc != 2) {
-    glutDisplayFunc(blackWindow);
+    glutDisplayFunc(drawImage);
   }
   else {
     filename = argv[1];
