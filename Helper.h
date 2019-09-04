@@ -39,8 +39,7 @@ Image readImage(string file) {
   image.height = spec.height;
   image.channels = spec.nchannels;
   image.ext = file.substr(file.find("."), file.length());
-  image.pixels = new unsigned char[image.width*image.height*4];
-  // std::vector<unsigned char> pixels (image.width*image.height*image.channels);
+  image.pixels = new unsigned char[image.width*image.height*image.channels];
   in->read_image (TypeDesc::UINT8, &image.pixels[0]);
   in->close ();
   ImageInput::destroy (in);

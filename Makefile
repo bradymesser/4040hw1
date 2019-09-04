@@ -46,3 +46,4 @@ test:
 	./imgview teapot.jpg
 	./imgview cube.ppm
 	./imgview mario.png
+	./imgview

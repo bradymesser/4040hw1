@@ -1,7 +1,7 @@
 #include "Helper.h"
 
-int WIDTH = 500;
-int HEIGHT = 500;
+const int WIDTH = 500;
+const int HEIGHT = 500;
 static int icolor = 0;
 string filename = "";
 Image img_global;
@@ -21,7 +21,7 @@ void handleReshape(int w, int h) {
 
 void drawImage(){
   // specify window clear (background) color to be opaque white
-  glClearColor(0,0,0,0);
+  glClearColor(1,1,1,1);
 
   // clear window to background color
   glClear(GL_COLOR_BUFFER_BIT);
@@ -35,14 +35,18 @@ void drawImage(){
 
   Image image = readImage(filename);
   img_global = image;
+	// Set window to be the same size as the image
   glutReshapeWindow(image.width, image.height);
   glutPostRedisplay();
-  // writeImage(image);
+
   switch (image.channels) {
     case 1:
-      glDrawPixels(image.width, image.height, GL_LUMINANCE, GL_UNSIGNED_BYTE, image.pixels);
-      break;
+			// set unpack alignment to 1 so that rows aren't skipped in the pixmap
+			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+			glDrawPixels(image.width, image.height, GL_LUMINANCE, GL_UNSIGNED_BYTE, image.pixels);
+			break;
     case 2:
+			// I'm not sure if 2 channels is a case but I implemented it anyways
       glDrawPixels(image.width, image.height, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, image.pixels);
       break;
     case 3:
@@ -93,12 +97,10 @@ int main (int argc, char *argv[]) {
   glutKeyboardFunc(handleKey);
   glutReshapeFunc(handleReshape); // window resize callback
 
-  if (argc != 2) {
-    glutDisplayFunc(drawImage);
+  if (argc == 2) {
+		filename = argv[1];
   }
-  else {
-    filename = argv[1];
-  }
+
   glutMainLoop();
   return 0;
 }
