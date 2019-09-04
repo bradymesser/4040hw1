@@ -1,3 +1,9 @@
+/*
+Brady Messer (wmesser@clemson.edu)
+CPSC 4040 HW1 Fall 2019
+This file contains the Image object and some helper functions to read and write images
+*/
+
 #include <GL/glut.h>
 #include <iostream>
 #include <OpenImageIO/imageio.h>
@@ -5,6 +11,8 @@
 using namespace std;
 OIIO_NAMESPACE_USING;
 
+// The struct that represents an image, can be converted to a class later and
+// the read and write image functions can be encapsulated within the class
 struct Image {
   int width;
   int height;
@@ -13,6 +21,7 @@ struct Image {
   string ext;
 };
 
+// Takes in an image and a file name and writes the image to filename
 void writeImage(Image image, string filename) {
   const int xres = image.width, yres = image.height;
   const int channels = image.channels;  // RGB
@@ -27,6 +36,7 @@ void writeImage(Image image, string filename) {
 }
 
 
+// Reads in an image from the specified file and returns an Image struct
 Image readImage(string file) {
   ImageInput *in = ImageInput::open(file);
   if (!in) {

@@ -1,11 +1,18 @@
+/*
+Brady Messer (wmesser@clemson.edu)
+CPSC 4040 HW1 Fall 2019
+This program reads in an image file and displays it in a window using Glut,
+the user can then either write the image to a new file, choose another image to
+display in the window, or quit out.
+*/
 #include "Helper.h"
 
 const int WIDTH = 500;
 const int HEIGHT = 500;
-static int icolor = 0;
 string filename = "";
 Image img_global;
 
+// Handles reshaping the window and flips the image to correct orientation
 void handleReshape(int w, int h) {
 	// set the viewport to be the entire window
 	glViewport(0, 0, w, h);
@@ -19,6 +26,7 @@ void handleReshape(int w, int h) {
   glRasterPos3f(0, h - 1, -0.3);
 }
 
+// draws the image or a black screen if there is no file
 void drawImage(){
   // specify window clear (background) color to be opaque white
   glClearColor(1,1,1,1);
@@ -62,6 +70,7 @@ void drawImage(){
   glFlush();
 }
 
+// Handles the users key presses
 void handleKey(unsigned char key, int x, int y) {
   switch(key){
     case 'q':		// q - quit
