@@ -11,6 +11,8 @@ const int WIDTH = 500;
 const int HEIGHT = 500;
 string filename = "";
 Image img_global;
+bool invertBool = false;
+int colorMode = 0;
 
 // Handles reshaping the window and flips the image to correct orientation
 void handleReshape(int w, int h) {
@@ -24,6 +26,33 @@ void handleReshape(int w, int h) {
   // flip the image to the correct orientation
   glPixelZoom( 1, -1 );
   glRasterPos3f(0, h - 1, -0.3);
+}
+
+Image invertImg(Image img) {
+  switch (img.channels) {
+    case 1:
+			// set unpack alignment to 1 so that rows aren't skipped in the pixmap
+			for (int i = 0; i < img.width * img.height; i++) {
+				img.pixels[i] = 255 - img.pixels[i];
+			}
+			break;
+    case 2:
+			// I'm not sure if 2 channels is a case but I implemented it anyways
+      break;
+    case 3:
+			for (int i = 0; i < img.width * img.height * img.channels; i++) {
+				img.pixels[i] = 255 - img.pixels[i];
+			}
+      break;
+    case 4:
+			for (int i = 0; i < img.width * img.height * img.channels; i++) {
+				img.pixels[i] = 255 - img.pixels[i];
+			}
+      break;
+    default:
+      break;
+  }
+  return img;
 }
 
 // draws the image or a black screen if there is no file
@@ -43,6 +72,10 @@ void drawImage(){
 
   Image image = readImage(filename);
   img_global = image;
+	if (invertBool) {
+		image = invertImg(image);
+		img_global = image;
+	}
 	// Set window to be the same size as the image
   glutReshapeWindow(image.width, image.height);
   glutPostRedisplay();
@@ -91,6 +124,10 @@ void handleKey(unsigned char key, int x, int y) {
       writeImage(img_global, temp);
       break;
     }
+		case 'i':
+		case 'I':
+			invertBool = !invertBool;
+			break;
     default:		// not a valid key -- just ignore it
       return;
   }
