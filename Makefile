@@ -42,7 +42,7 @@ clean:
 	rm -f core.* *.o *~ ${PROJECT}
 
 test:
-	./imgview parrot_greyscale.png
+	./imgview parrot_greyscale.png teapot.jpg cube.ppm mario.png
 	./imgview teapot.jpg
 	./imgview cube.ppm
 	./imgview mario.png

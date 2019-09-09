@@ -124,6 +124,10 @@ void handleKey(unsigned char key, int x, int y) {
     case 'r':
     case 'R':
       cout << "Enter the filename: ";
+			if (imgCount == 0) {
+				imgCount += 1;
+				imageFiles = new string[imgCount];
+			}
       cin >> imageFiles[imgIndex];
       glutPostRedisplay();
       break;
