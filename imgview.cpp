@@ -7,12 +7,17 @@ display in the window, or quit out.
 */
 #include "Helper.h"
 
+#define KEY_LEFT 75
+#define KEY_RIGHT 77
+
 const int WIDTH = 500;
 const int HEIGHT = 500;
-string filename = "";
-Image img_global;
-bool invertBool = false;
-int colorMode = 0;
+string filename = "";	// the name of the currently displayed file
+string *imageFiles;	// multiple files specified on the command line are stored here
+int imgIndex = 0;	// the index of the current image being displayed
+int imgCount = 0;	// the count of all the images in imageFiles
+Image img_global;	// the current image being displayed
+bool invertBool = false;	// if the user wants to invert colors or not
 
 // Handles reshaping the window and flips the image to correct orientation
 void handleReshape(int w, int h) {
@@ -28,6 +33,7 @@ void handleReshape(int w, int h) {
   glRasterPos3f(0, h - 1, -0.3);
 }
 
+// inverts the colors of the image
 Image invertImg(Image img) {
   switch (img.channels) {
     case 1:
@@ -63,6 +69,11 @@ void drawImage(){
   // clear window to background color
   glClear(GL_COLOR_BUFFER_BIT);
 
+	if (imgCount > 0) {
+		filename = imageFiles[imgIndex];
+	} else {
+		filename = "";
+	}
   if (filename == "") {
     glClearColor(0,0,0,0);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -113,7 +124,7 @@ void handleKey(unsigned char key, int x, int y) {
     case 'r':
     case 'R':
       cout << "Enter the filename: ";
-      cin >> filename;
+      cin >> imageFiles[imgIndex];
       glutPostRedisplay();
       break;
     case 'w':
@@ -133,6 +144,23 @@ void handleKey(unsigned char key, int x, int y) {
   }
 }
 
+void specialKey(int key, int x, int y) {
+	switch (key) {
+		case GLUT_KEY_LEFT:
+			if (imgIndex > 0) {
+				imgIndex -= 1;
+			}
+			break;
+		case GLUT_KEY_RIGHT:
+			if (imgIndex < imgCount-1) {
+				imgIndex += 1;
+			}
+			break;
+		default:
+			break;
+	}
+}
+
 int main (int argc, char *argv[]) {
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_RGBA);
@@ -141,12 +169,19 @@ int main (int argc, char *argv[]) {
 
   glutDisplayFunc(drawImage);	  // display callback
   glutKeyboardFunc(handleKey);
+	glutSpecialFunc(specialKey);
   glutReshapeFunc(handleReshape); // window resize callback
 
   if (argc == 2) {
 		filename = argv[1];
   }
-
+	if (argc >= 2) {
+		imageFiles = new string[argc - 1];
+		for (int i = 1; i < argc; i++) {
+			imageFiles[i - 1] = argv[i];
+			imgCount += 1;
+		}
+	}
   glutMainLoop();
   return 0;
 }
