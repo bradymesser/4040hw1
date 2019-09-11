@@ -33,34 +33,6 @@ void handleReshape(int w, int h) {
   glRasterPos3f(0, h - 1, -0.3);
 }
 
-// inverts the colors of the image
-Image invertImg(Image img) {
-  switch (img.channels) {
-    case 1:
-			// set unpack alignment to 1 so that rows aren't skipped in the pixmap
-			for (int i = 0; i < img.width * img.height; i++) {
-				img.pixels[i] = 255 - img.pixels[i];
-			}
-			break;
-    case 2:
-			// I'm not sure if 2 channels is a case but I implemented it anyways
-      break;
-    case 3:
-			for (int i = 0; i < img.width * img.height * img.channels; i++) {
-				img.pixels[i] = 255 - img.pixels[i];
-			}
-      break;
-    case 4:
-			for (int i = 0; i < img.width * img.height * img.channels; i++) {
-				img.pixels[i] = 255 - img.pixels[i];
-			}
-      break;
-    default:
-      break;
-  }
-  return img;
-}
-
 // draws the image or a black screen if there is no file
 void drawImage(){
   // specify window clear (background) color to be opaque white
@@ -81,35 +53,17 @@ void drawImage(){
     return;
   }
 
-  Image image = readImage(filename);
+  Image image = Image(filename);
   img_global = image;
 	if (invertBool) {
-		image = invertImg(image);
+		image.invert();
 		img_global = image;
 	}
 	// Set window to be the same size as the image
   glutReshapeWindow(image.width, image.height);
   glutPostRedisplay();
 
-  switch (image.channels) {
-    case 1:
-			// set unpack alignment to 1 so that rows aren't skipped in the pixmap
-			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-			glDrawPixels(image.width, image.height, GL_LUMINANCE, GL_UNSIGNED_BYTE, image.pixels);
-			break;
-    case 2:
-			// I'm not sure if 2 channels is a case but I implemented it anyways
-      glDrawPixels(image.width, image.height, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, image.pixels);
-      break;
-    case 3:
-      glDrawPixels(image.width, image.height, GL_RGB, GL_UNSIGNED_BYTE, image.pixels);
-      break;
-    case 4:
-      glDrawPixels(image.width, image.height, GL_RGBA, GL_UNSIGNED_BYTE, image.pixels);
-      break;
-    default:
-      break;
-  }
+	image.draw();
   // flush the OpenGL pipeline to the viewport
   glFlush();
 }
@@ -136,7 +90,7 @@ void handleKey(unsigned char key, int x, int y) {
       string temp;
       cout << "Enter the name of the output file: ";
       cin >> temp;
-      writeImage(img_global, temp);
+      img_global.writeImage(temp);
       break;
     }
 		case 'i':
